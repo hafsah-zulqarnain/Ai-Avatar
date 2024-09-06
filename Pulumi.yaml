@@ -1,0 +1,11 @@
+name: ai-avatar
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+description: ai avatar using webui-controlnet-reactor
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: gcp-python

@@ -14,7 +14,6 @@ load_dotenv()
 
 app = FastAPI()
 
-# Load environment variables
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
@@ -25,7 +24,6 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 interface = create_app()
 gr.mount_gradio_app(app, interface, path="/gradio")
-# Function to generate code verifier and challenge
 def generate_code_verifier():
     return base64.urlsafe_b64encode(os.urandom(32)).rstrip(b'=').decode('ascii')
 
@@ -77,7 +75,6 @@ async def oauth2_callback(request: Request, code: str):
 
         token_response = response.json()
 
-    # Get user info
     user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     headers = {
         "Authorization": f"Bearer {token_response['access_token']}"
@@ -105,16 +102,6 @@ async def logout(request: Request):
     request.session.pop('code_verifier', None)
     return RedirectResponse(url='/')
 
-# @app.get("/gradio")
-# async def launch_gradio(request: Request):
-#     user_email = request.session.get('user_email')
-#     if not user_email:
-#         return RedirectResponse(url='/login')
-
-#     try:
-#         return {"message": "Gradio interface mounted. Visit /gradio to access it."}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail="Error launching Gradio")
 
 if __name__ == "__main__":
     import uvicorn

@@ -18,7 +18,6 @@ from config2 import API_KEY
 from config2 import db
 from api_requests import create_avatar, get_job_results, get_job_status
 from data_display import generate_results_display
-# Set up logging configuration
 logging.basicConfig(level=logging.INFO)
 
 
@@ -29,7 +28,7 @@ def update_reactor_options(reactor_option):
     return gr.update(visible=(reactor_option == "Use Reactor"))
 
 def handle_submission(num_generations, prompt, negative_prompt, batch_size, steps, cfg_scale, controlnet_option, controlnet_image, controlnet_module, controlnet_model, controlnet_sampler, reactor_option, source_image, upscaler, scale, face_restorer, restorer_visibility, codeformer_weight, restore_first, gender_source, gender_target, save_to_file, device, mask_face, select_source, upscale_force, selected_model):
-    # Define ControlNet options (if any)
+
     user_email = get_user_email()
     print("Inside handler")
     controlnet_options = {}
@@ -49,7 +48,6 @@ def handle_submission(num_generations, prompt, negative_prompt, batch_size, step
                 print(f"Failed to process image: {e}")
     
     
-    # Define ReActor options
     reactor_options = {}
     if reactor_option == "Use Reactor":
         reactor_options = {
@@ -148,15 +146,13 @@ def handle_submission(num_generations, prompt, negative_prompt, batch_size, step
         user_ref = db.collection('users').document(user_email)
 
 
-        # Ensure the document exists before updating
         if not user_ref.get().exists:
             user_ref.set({
                 'email': user_email,
-                'jobs': []  # Initialize with an empty jobs list or any other default structure
+                'jobs': [] 
             })
 
         user_ref.update({"jobs": firestore.ArrayUnion([job_data])})
-        #db.collection('jobs').document(job_id).set({'status': job_status})
         return job_id
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
@@ -186,18 +182,9 @@ def create_app():
     
     with gr.Blocks() as app:
         gr.Markdown("# AI Avatar Creation")
-        #gr.Markdown(f"Welcome, {user_email}")
-        print("Code")
-        # results = display_results()
-        
-        # for result in results:
-        #     gr.Markdown(f"## Job ID: {result['job_id']}")
-        #     gr.Markdown(f"Status: {result['status']}")
-        #     for img in result['images']:
-        #         gr.Image(img)
         
         username_button = gr.Button("Show Username")
-        username_display = gr.Textbox(label="Username")  # Using Textbox to display the username
+        username_display = gr.Textbox(label="Username")  
         
         username_button.click(
             get_username,
@@ -312,7 +299,7 @@ def create_app():
         check_results_btn = gr.Button("Check Results")
 
         results_df = gr.Dataframe(headers=["Job ID", "Status"], label="Job Status")
-        results_display = gr.Gallery(label="Results", elem_id="gallery")  # Use scale instead of style
+        results_display = gr.Gallery(label="Results", elem_id="gallery") 
 
         check_results_btn.click(
             lambda: check_and_show_results(job_ids),
@@ -320,5 +307,3 @@ def create_app():
         )
  
     return app
-# app = create_app()g
-# app.launch()
